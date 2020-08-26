@@ -32,7 +32,7 @@ void sendMessage(void *pvParameters)
     for (;;)
     {
 
-        esp_mqtt_client_publish(client, "losant/5f208914ee6675000666d8e2/state", "{\"data\": {\"message\": \"hello from ESP32\",\"number\": 14}}", 0, 1, 0);
+        esp_mqtt_client_publish(client, "losant/<device id>/state", "{\"data\": {\"message\": \"hello from ESP32\",\"number\": 14}}", 0, 1, 0);
 
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
@@ -46,7 +46,7 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
     switch (event->event_id)
     {
     case MQTT_EVENT_CONNECTED:
-        msg_id = esp_mqtt_client_subscribe(client, "losant/5f208914ee6675000666d8e2/command", 0);
+        msg_id = esp_mqtt_client_subscribe(client, "losant/<device id>/command", 0);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
         break;
     case MQTT_EVENT_DATA:
@@ -79,9 +79,9 @@ void app_main()
     // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/protocols/mqtt.html
     esp_mqtt_client_config_t mqtt_cfg = {
         .uri = "mqtts://broker.losant.com",
-        .client_id = "5f208914ee6675000666d8e2",
-        .username = "4a20c94d-1ac9-4b3e-bfc8-71efd9e2e608",
-        .password = "feb708179a915d1d80c8d1434b45ef9d4ca7017d66fa858d72fd21f5e3018b19"};
+        .client_id = "<device id>",
+        .username = "<access_key>",
+        .password = "<access_secret>"};
 
     // establish mqtt client information, then start mqtt client
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
