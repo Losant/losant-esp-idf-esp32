@@ -20,33 +20,52 @@
 
 #include "esp_log.h"
 #include "mqtt_client.h"
-#include "cJSON.h"
 
-static const char *TAG = "MQTT_EXAMPLE";
+// Losant Credentials
+#define device_id     "<device_id>"
+#define access_key    "<access_key>"
+#define access_secret "<access_secret>"
+
+static const char *TAG = "ESP32_GETTING_STARTED";
 
 // function to publish message to mqtt topic
 void sendMessage(void *pvParameters)
 {
     esp_mqtt_client_handle_t client = *((esp_mqtt_client_handle_t *)pvParameters);
 
+    char topic[128];
+    sprintf(topic, "losant/%s/state", device_id);
+
     for (;;)
     {
 
-        esp_mqtt_client_publish(client, "losant/<device id>/state", "{\"data\": {\"message\": \"hello from ESP32\",\"number\": 14}}", 0, 1, 0);
+        esp_mqtt_client_publish(client, topic, "{\"data\": {\"message\": \"hello from ESP32\",\"number\": 14}}", 0, 1, 0);
 
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
 }
 
+/**
+ * On device connect, using the MQTT events provided by the esp-idf
+ * this subscribes to the command topic with MQTT_EVENT_CONNECTED
+ * 
+ * When a command is received, the MQTT_EVENT_DATA is triggered.
+ * 
+ * */
 static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
 {
     esp_mqtt_client_handle_t client = event->client;
+
     int msg_id;
-    // your_context_t *context = event->context;
+
+    char command_topic[128];
+    sprintf(command_topic, "losant/%s/command", device_id);
+
     switch (event->event_id)
     {
     case MQTT_EVENT_CONNECTED:
-        msg_id = esp_mqtt_client_subscribe(client, "losant/<device id>/command", 0);
+        // on connect, subscribe to the command topic
+        msg_id = esp_mqtt_client_subscribe(client, command_topic, 0);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
         break;
     case MQTT_EVENT_DATA:
@@ -79,9 +98,9 @@ void app_main()
     // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/protocols/mqtt.html
     esp_mqtt_client_config_t mqtt_cfg = {
         .uri = "mqtts://broker.losant.com",
-        .client_id = "<device id>",
-        .username = "<access_key>",
-        .password = "<access_secret>"};
+        .client_id = device_id,
+        .username = access_key,
+        .password = access_secret};
 
     // establish mqtt client information, then start mqtt client
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
