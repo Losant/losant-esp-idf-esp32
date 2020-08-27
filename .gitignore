@@ -6,6 +6,6 @@ build/
 
 config.json
 
-sdkconfig
+/sdkconfig
 
-sdkconfig.old
+/sdkconfig.old
