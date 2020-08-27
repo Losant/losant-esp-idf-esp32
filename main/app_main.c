@@ -69,7 +69,7 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
         printf("DATA=%.*s\r\n", event->data_len, event->data);
         break;
     default:
-        break;
+        ESP_LOGI(TAG, "Other event id:%d", event->event_id);
     }
     return ESP_OK;
 }
