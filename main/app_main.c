@@ -16,10 +16,11 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-// Losant Credentials
-#define device_id "<device_id>"
-#define access_key "<access_key>"
-#define access_secret "<access_secret>"
+// Losant Credentials, put your device ID, access key, and access
+// secret here to be used throughout the application.
+#define LOSANT_DEVICE_ID "Your Losant Device ID"
+#define LOSANT_ACCESS_KEY "Your Losant Access Key"
+#define LOSANT_ACCESS_SECRET "Your Losant Access Secret
 
 static const char *TAG = "ESP32_GETTING_STARTED";
 
@@ -29,7 +30,7 @@ void sendMessage(void *pvParameters)
     esp_mqtt_client_handle_t client = *((esp_mqtt_client_handle_t *)pvParameters);
 
     char topic[128];
-    sprintf(topic, "losant/%s/state", device_id);
+    sprintf(topic, "losant/%s/state", LOSANT_DEVICE_ID);
 
     for (;;)
     {
@@ -54,7 +55,7 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
     int msg_id;
 
     char command_topic[128];
-    sprintf(command_topic, "losant/%s/command", device_id);
+    sprintf(command_topic, "losant/%s/command", LOSANT_DEVICE_ID);
 
     switch (event->event_id)
     {
@@ -93,9 +94,9 @@ void app_main()
     // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/protocols/mqtt.html
     esp_mqtt_client_config_t mqtt_cfg = {
         .uri = "mqtts://broker.losant.com",
-        .client_id = device_id,
-        .username = access_key,
-        .password = access_secret};
+        .client_id = LOSANT_DEVICE_ID,
+        .username = LOSANT_ACCESS_KEY,
+        .password = LOSANT_ACCESS_SECRET};
 
     // establish mqtt client information, then start mqtt client
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
