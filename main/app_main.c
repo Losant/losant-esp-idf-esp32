@@ -16,7 +16,8 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-// Losant Credentials, put your device ID, access key, and access
+// Losant Credentials
+// put your device ID, access key, and access
 // secret here to be used throughout the application.
 #define LOSANT_DEVICE_ID "Your Losant Device ID"
 #define LOSANT_ACCESS_KEY "Your Losant Access Key"
@@ -90,6 +91,7 @@ void app_main()
     // This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
     ESP_ERROR_CHECK(example_connect());
 
+    // MQTT client configuration, the variables DO NOT need to be updated
     // you can add more config information from:
     // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/protocols/mqtt.html
     esp_mqtt_client_config_t mqtt_cfg = {
