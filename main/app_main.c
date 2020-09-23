@@ -35,7 +35,6 @@ void sendMessage(void *pvParameters)
 
     for (;;)
     {
-
         esp_mqtt_client_publish(client, topic, "{\"data\": {\"message\": \"hello from ESP32\",\"number\": 14}}", 0, 1, 0);
 
         vTaskDelay(pdMS_TO_TICKS(5000));
