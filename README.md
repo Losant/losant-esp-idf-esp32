@@ -1,6 +1,6 @@
 # Getting Started with ESP32 and Losant
 
-Using the [esp-idf](https://github.com/espressif/esp-idf), connect an ESP32 to the Losant Platform, publish to the state topic, and subscribe to device commands.
+Using the [ESP-IDF](https://github.com/espressif/esp-idf), connect an ESP32 to the Losant Platform, publish to the state topic, and subscribe to device commands.
 
 ## To Use
 
