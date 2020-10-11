@@ -16,23 +16,42 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-// Losant Credentials
-// put your device ID, access key, and access
-// secret here to be used throughout the application.
+/**
+ * Losant Credentials
+ * put your device ID, access key, and access
+ * secret here to be used throughout the application. 
+*/
 #define LOSANT_DEVICE_ID "Your Losant Device ID"
 #define LOSANT_ACCESS_KEY "Your Losant Access Key"
 #define LOSANT_ACCESS_SECRET "Your Losant Access Secret
 
-static const char *TAG = "ESP32_GETTING_STARTED";
+/**
+ * LOGGING_TAG is a variable used throughout for logging
+ * purposes. You can customize the value of the variable.
+*/
+static const char *LOGGING_TAG = "ESP32_GETTING_STARTED";
 
-// function to publish message to mqtt topic
+/**
+ * @sendMessage 
+ * 
+ * This function creates the Losant device state topic for your 
+ * device. 
+ * 
+ * It then publishes a messages to that topic. 
+ * 
+ * pvParameters and vTaskDelay are used for FreeRTOS task management
+*/
 void sendMessage(void *pvParameters)
 {
     esp_mqtt_client_handle_t client = *((esp_mqtt_client_handle_t *)pvParameters);
 
+    // create topic variable
     char topic[128];
+    
+    //set topic value using sprintf to the losant state topic for our device
     sprintf(topic, "losant/%s/state", LOSANT_DEVICE_ID);
 
+    // Using FreeRTOS task management, forever loop, and send state to the topic
     for (;;)
     {
         esp_mqtt_client_publish(client, topic, "{\"data\": {\"message\": \"hello from ESP32\",\"number\": 14}}", 0, 1, 0);
@@ -54,6 +73,7 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
 
     int msg_id;
 
+    // define Losant device Command topic
     char command_topic[128];
     sprintf(command_topic, "losant/%s/command", LOSANT_DEVICE_ID);
 
@@ -62,22 +82,22 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
     case MQTT_EVENT_CONNECTED:
         // on connect, subscribe to the command topic
         msg_id = esp_mqtt_client_subscribe(client, command_topic, 0);
-        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+        ESP_LOGI(LOGGING_TAG, "sent subscribe successful, msg_id=%d", msg_id);
         break;
     case MQTT_EVENT_DATA:
-        ESP_LOGI(TAG, "MQTT_EVENT_DATA");
+        ESP_LOGI(LOGGING_TAG, "MQTT_EVENT_DATA");
         printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
         printf("DATA=%.*s\r\n", event->data_len, event->data);
         break;
     default:
-        ESP_LOGI(TAG, "Other event id:%d", event->event_id);
+        ESP_LOGI(LOGGING_TAG, "Other event id:%d", event->event_id);
     }
     return ESP_OK;
 }
 
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
-    ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
+    ESP_LOGD(LOGGING_TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
     mqtt_event_handler_cb(event_data);
 }
 
@@ -90,9 +110,11 @@ void app_main()
     // This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
     ESP_ERROR_CHECK(example_connect());
 
-    // MQTT client configuration, the variables DO NOT need to be updated
-    // you can add more config information from:
-    // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/protocols/mqtt.html
+    /**
+     * MQTT client configuration, the variables DO NOT need to be updated
+     * you can add more config information from:
+     * https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/protocols/mqtt.html 
+    */
     esp_mqtt_client_config_t mqtt_cfg = {
         .uri = "mqtts://broker.losant.com",
         .client_id = LOSANT_DEVICE_ID,
@@ -104,12 +126,7 @@ void app_main()
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, client);
     esp_mqtt_client_start(client);
 
-    // Create sensor task.
+    // Create sendMessage task.
     TaskHandle_t xHandle = NULL;
     xTaskCreate(sendMessage, "READ", 2048, &client, tskIDLE_PRIORITY, &xHandle);
-
-    for (;;)
-    {
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
 }

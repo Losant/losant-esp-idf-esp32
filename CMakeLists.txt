@@ -1,4 +1,6 @@
-# The following four lines of boilerplate have to be in your project's CMakeLists
+# This file is modeled after https://github.com/espressif/esp-idf/blob/master/examples/protocols/mqtt/tcp/CMakeLists.txt
+# With updated values for this project
+# The following lines of boilerplate have to be in your project's CMakeLists
 # in this exact order for cmake to work correctly
 cmake_minimum_required(VERSION 3.5)
 
