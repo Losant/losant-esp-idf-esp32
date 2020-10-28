@@ -23,7 +23,7 @@
 */
 #define LOSANT_DEVICE_ID "Your Losant Device ID"
 #define LOSANT_ACCESS_KEY "Your Losant Access Key"
-#define LOSANT_ACCESS_SECRET "Your Losant Access Secret
+#define LOSANT_ACCESS_SECRET "Your Losant Access Secret"
 
 /**
  * LOGGING_TAG is a variable used throughout for logging
@@ -47,7 +47,7 @@ void sendMessage(void *pvParameters)
 
     // create topic variable
     char topic[128];
-    
+
     //set topic value using sprintf to the losant state topic for our device
     sprintf(topic, "losant/%s/state", LOSANT_DEVICE_ID);
 
@@ -56,7 +56,7 @@ void sendMessage(void *pvParameters)
     {
         esp_mqtt_client_publish(client, topic, "{\"data\": {\"message\": \"hello from ESP32\",\"number\": 14}}", 0, 1, 0);
 
-        vTaskDelay(pdMS_TO_TICKS(5000)); // wait 5 seconds 
+        vTaskDelay(pdMS_TO_TICKS(5000)); // wait 5 seconds
     }
 }
 
